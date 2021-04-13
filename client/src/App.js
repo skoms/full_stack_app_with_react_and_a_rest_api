@@ -1,38 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
-import React, { useState, useEffect } from 'react';
-const axios = require('axios')
+import './styles/reset.css';
+import './styles/global.css';
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+
+import Header from './components/Header';
+import Courses from './components/Courses';
+import CourseDetail from './components/CourseDetail';
 
 function App() {
-  const [ courses, setCourses ] = useState([]);
-
-  const getCourses = (async () => {
-    const response = await axios('http://localhost:5000/api/courses');
-    console.log(response.data);
-    setCourses(response.data);
-  } )
-
-  useEffect(() => {
-    getCourses();
-  }, []);
-
-  let results;
-  if (courses.length) {
-    results = courses.map( course => 
-      <li key={course.id}>{course.title}</li>
-    );
-  } else {
-    console.log('Error: ' + courses);
-  }
-  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <ul>
-          { results }
-        </ul>
-      </header>
+      <Header />
+      <Router>
+        <Switch>
+          <Route exact path="/api/courses" component={Courses} />
+          <Route path="/api/courses/:id" component={CourseDetail} />
+        </Switch>
+      </Router>
     </div>
   );
 }
