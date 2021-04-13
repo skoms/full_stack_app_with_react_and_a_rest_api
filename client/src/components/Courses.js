@@ -15,7 +15,7 @@ export default class Courses extends Component {
   }
 
   async getCourses() {
-    const courses = await axios('http://localhost:5000/api/courses').then(response => response.data);
+    const courses = await axios.get('http://localhost:5000/api/courses').then(response => response.data);
     this.setState({ courses });
   }
 

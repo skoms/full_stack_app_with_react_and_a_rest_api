@@ -7,11 +7,32 @@ export default function CourseDetail(props) {
   const { id } = useParams();
   const [ didLoad, setDidLoad ] = useState(false);
 
-  
+  const getMaterials = () => {
+    let materials = course.materialsNeeded.split('*');
+    if (!materials[0]) {
+      materials.shift();
+    }
+    
+    return materials.map( (material, index)=> {
+        return <li key={index}>{material}</li>
+    });
+  }
+
+  const getInstructions = () => {
+    let instructions = course.description.split('\n\n');
+    return instructions.map( (instruction, index)=> {
+      return (<p key={index} className="instruction">{instruction}</p>)
+    });
+  }
+
+  const deleteCourse = async () => {
+    await axios.delete(`http://localhost:5000/api/courses/${id}`)
+              .catch(err => console.error(err));
+  }
 
   useEffect(() => {
     const getCourse = async () => {
-      await axios(`http://localhost:5000/api/courses/${id}`)
+      await axios.get(`http://localhost:5000/api/courses/${id}`)
       .then(response => setCourse(response.data))
       .catch(err => console.error(err));
     }
@@ -20,14 +41,15 @@ export default function CourseDetail(props) {
       getCourse();
       setDidLoad(true);
     }
+
   }, [didLoad, id]);
 
   return (
     <>
           <div className="actions--bar">
               <div className="wrap">
-                  <a className="button" href="/update-course">Update Course</a>
-                  <a className="button" href="/">Delete Course</a>
+                  <a className="button" href={`/update-course/${id}`}>Update Course</a>
+                  <a className="button" href="/api/courses" onClick={deleteCourse}>Delete Course</a>
                   <a className="button button-secondary" href="/">Return to List</a>
               </div>
           </div>
@@ -43,7 +65,12 @@ export default function CourseDetail(props) {
                             <h4 className="course--name">{course.title}</h4>
                             <p>By {`${course.User.firstName} ${course.User.lastName}`}</p>
 
-                            <p>{course.description}</p>
+                            {course.description
+                            ?
+                              getInstructions()
+                            :
+                              <p>Loading...</p>
+                            }
 
                         </div>
                         <div>
@@ -52,7 +79,12 @@ export default function CourseDetail(props) {
 
                             <h3 className="course--detail--title">Materials Needed</h3>
                             <ul className="course--detail--list">
-                                <li>{course.materialsNeeded}</li>
+                              {course.materialsNeeded
+                              ?
+                                getMaterials()
+                              :
+                                <li>Loading...</li>
+                              }
                             </ul>
                         </div>
                     </div>

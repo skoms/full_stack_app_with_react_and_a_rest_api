@@ -113,6 +113,11 @@ header nav a:hover {
     margin: 0 0 1.5rem 1rem;
     line-height: 1.5;
 }
+
+.instruction p {
+    margin-bottom: 1.5rem;
+}
+
 .actions--bar {
     background: #e9e5f0;
     padding: 1rem 0;
