@@ -6,11 +6,12 @@ export default class Data {
       method,
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-      },
+      }
     };
 
     if (body !== null) {
       options.body = JSON.stringify(body);
+      console.log(options.body);
     }
 
     if (requiresAuth) {
@@ -25,9 +26,11 @@ export default class Data {
   async getUser(username, password) {
     const response = await this.api(`/users`, 'GET', null, true, { username, password });
     if (response.status === 200) {
-      return response.json().then(data => data);
+      console.log('200');
+      return response.json().then( data => data );
     }
     else if (response.status === 401) {
+      console.log('401');
       return null;
     }
     else {
@@ -42,7 +45,7 @@ export default class Data {
     }
     else if (response.status === 400) {
       return response.json().then(data => {
-        return data.errors;
+        return data.message;
       });
     }
     else {
@@ -53,7 +56,7 @@ export default class Data {
   async getCourse(id) {
     const response = await this.api(`/courses/${id}`, 'GET', null);
     if (response.status === 200) {
-      return response.json().then(data => data);
+      return response.json().then( data => data );
     } else {
       throw new Error();
     }
@@ -62,29 +65,29 @@ export default class Data {
   async getCourses() {
     const response = await this.api(`/courses`, 'GET', null);
     if (response.status === 200) {
-      return response.json().then(data => data);
+      return response.json().then( data => data );
     } else {
       throw new Error();
     }
   }
   
-  async createCourse(course) {
-    const response = await this.api('/courses', 'POST', course);
+  async createCourse(course, user) {
+    const response = await this.api('/courses', 'POST', course, true, user);
     if (response.status === 201) {
-      return [];
+      return 201;
     } else if (response.status === 400) {
-      return response.json().then(data => data.errors );
+      return response.json().then(data => data.message );
     } else {
       throw new Error();
     }
   }
 
-  async updateCourse(course, id) {
-    const response = await this.api(`/courses/${id}`, 'PUT', course);
+  async updateCourse(course, id, user) {
+    const response = await this.api(`/courses/${id}`, 'PUT', course, true, user);
     if (response.status === 204) {
-      return [];
+      return 204;
     } else if (response.status === 403) {
-      return response.json().then(data => data.errors );
+      return response.json().then(data => data.message );
     } else {
       throw new Error();
     }

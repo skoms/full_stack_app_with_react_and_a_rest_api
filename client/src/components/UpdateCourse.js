@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useContext } from 'react';
+import { Context } from '../Context';
 import { useParams, useHistory } from 'react-router-dom';
 
 
 export default function UpdateCourse(props) {
-  let history = useHistory();
+  const history = useHistory();
+  const context = useContext(Context);
   const [ course, setCourse ] = useState({});
   const { id } = useParams();
   const [ didLoad, setDidLoad ] = useState(false);
@@ -17,8 +18,8 @@ export default function UpdateCourse(props) {
 
   useEffect(() => {
     const getCourse = async () => {
-      await axios.get(`http://localhost:5000/api/courses/${id}`)
-      .then(response => setCourse(response.data))
+      await context.data.getCourse(id)
+      .then(response => setCourse(response))
       .catch(err => console.error(err));
     }
 
@@ -26,7 +27,15 @@ export default function UpdateCourse(props) {
       getCourse();
       setDidLoad(true);
     }
-  }, [didLoad, id]);
+  }, [context.data, didLoad, id]);
+
+  useEffect(() => {
+    setCourseTitle(course.title);
+    setCourseAuthor(course.User ? `${course.User.firstName} ${course.User.lastName}` : 'Loading...');
+    setCourseDescription(course.description);
+    setEstimatedTime(course.estimatedTime);
+    setMaterialsNeeded(course.materialsNeeded);
+  }, [course]);
 
   const change = (e) => {
     const { name, value } = e.target;
@@ -34,9 +43,6 @@ export default function UpdateCourse(props) {
     switch (name) {
       case 'courseTitle':
         setCourseTitle(value);
-        break;
-      case 'courseAuthor':
-        setCourseAuthor(value);
         break;
       case 'courseDescription':
         setCourseDescription(value);
@@ -52,8 +58,43 @@ export default function UpdateCourse(props) {
     }
   }
 
-  const submit = () => {
-
+  const submit = async (e) => {
+    e.preventDefault();
+    const updatedCourse = {
+      title: courseTitle,
+      description: courseDescription,
+      estimatedTime: estimatedTime,
+      materialsNeeded: materialsNeeded
+    }
+    console.log(updatedCourse);
+    let user;
+    if (context.authenticatedUser) {
+      const { emailAddress, password } = context.authenticatedUser;
+      user = {
+        username: emailAddress,
+        password: password
+      }
+    } else {
+      user = {
+        username: '',
+        password: ''
+      };
+    }
+    
+    await context.data.updateCourse(updatedCourse, id, user)
+      .then( status => {
+        if (status === 204) {
+          console.log(`${updatedCourse.courseTitle} was successfully updated!`);
+          history.push(`/api/courses/${id}`);
+        } else {
+          console.log('Update Failed, Makes sure to fill in all the required blanks!');
+          console.dir(status);
+        }
+      })
+      .catch(err => {
+          console.log(err.message);
+          history.push('/error');
+      });
   }
 
   const cancel = (e) => {
@@ -64,7 +105,7 @@ export default function UpdateCourse(props) {
   return (
     <div className="wrap">
       <h2>Update Course</h2>
-      <form>
+      <form onSubmit={submit}>
         {course.User
         ?
           <div className="main--flex">

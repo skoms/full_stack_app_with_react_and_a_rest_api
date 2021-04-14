@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useContext } from 'react';
+import { Context } from '../Context';
 import { useParams } from 'react-router-dom';
 
 export default function CourseDetail(props) {
+  const context = useContext(Context);
   const [ course, setCourse ] = useState({});
   const { id } = useParams();
   const [ didLoad, setDidLoad ] = useState(false);
@@ -12,7 +13,6 @@ export default function CourseDetail(props) {
     if (!materials[0]) {
       materials.shift();
     }
-    
     return materials.map( (material, index)=> {
         return <li key={index}>{material}</li>
     });
@@ -26,14 +26,14 @@ export default function CourseDetail(props) {
   }
 
   const deleteCourse = async () => {
-    await axios.delete(`http://localhost:5000/api/courses/${id}`)
+    await context.data.deleteCourse(id)
               .catch(err => console.error(err));
   }
 
   useEffect(() => {
     const getCourse = async () => {
-      await axios.get(`http://localhost:5000/api/courses/${id}`)
-      .then(response => setCourse(response.data))
+      await context.data.getCourse(id)
+      .then(response => setCourse(response))
       .catch(err => console.error(err));
     }
 
@@ -42,7 +42,7 @@ export default function CourseDetail(props) {
       setDidLoad(true);
     }
 
-  }, [didLoad, id]);
+  }, [context.data, didLoad, id]);
 
   return (
     <>

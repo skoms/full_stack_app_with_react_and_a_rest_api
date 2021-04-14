@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Cookies from 'js-cookie';
 import Data from './Data';
 
-const Context = React.createContext(); 
+export const Context = React.createContext(); 
 
 export class Provider extends Component {
 
@@ -23,6 +23,7 @@ export class Provider extends Component {
       actions: { 
         signIn: this.signIn,
         signOut: this.signOut,
+        signUp: this.signUp,
       },
     };
 
@@ -32,14 +33,33 @@ export class Provider extends Component {
       </Context.Provider>  
     );
   }
+
+  signUp = async (user) => {
+    const newUser = await this.data.createUser(user);
+    if (newUser.length === 0) {
+      const savedUser = await this.data.getUser(user.emailAddress, user.password);
+      if (savedUser) {
+        this.setState({ authenticatedUser: user });
+        Cookies.set('authenticatedUser', JSON.stringify(user));
+        return 201;
+      } else {
+        throw new Error();
+      }
+    } else if (newUser.length > 0) {
+      return newUser;
+    } else {
+      throw new Error();
+    }
+  }
   
   signIn = async (username, password) => {
     const user = await this.data.getUser(username, password);
     if (user !== null) {
+      user.password = password;
       this.setState({ authenticatedUser: user });
-      Cookies.set('authenticatedUser', JSON.stringify(user), { expires: 1 });
+      Cookies.set('authenticatedUser', JSON.stringify(user));
     }
-    return user;
+    return 200;
   }
 
   signOut = () => {
@@ -48,15 +68,4 @@ export class Provider extends Component {
   }
 }
 
-export const Consumer = Context.Consumer;
-
-export default function withContext(Component) {
-  return function ContextComponent(props) {
-    return (
-      <Context.Consumer>
-        { context => <Component {...props} context={context} />}
-      </Context.Consumer>
-    );
-  }
-}
 
