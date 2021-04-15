@@ -22,8 +22,11 @@ router.get('/:id', asyncHandler(async (req, res) => {
   const course = await Course.findByPk(req.params.id, { 
     attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded', 'userId'], 
     include: [ { model: User, attributes: ['firstName', 'lastName', 'emailAddress'] } ] });
-
-  res.status(200).json(course);
+  if (course) {
+    res.status(200).json(course);
+  } else {
+    res.status(404).end();
+  }
 }));
 
 // POST creates a new course and assigns the logged authenticated user as its owner
@@ -40,8 +43,14 @@ router.put('/:id', authenticateLogin, asyncHandler(async (req, res) => {
   const owner = await User.findOne({ where: { id: course.userId }});
 
   if (owner.emailAddress === req.currentUser.emailAddress) {
-    await Course.update(req.body, { where: { id: req.params.id } });
-    res.status(204).end();
+    await Course.update(req.body, { where: { id: req.params.id } })
+      .then(response => {
+        if (response.statusCode === 204) {
+          res.status(204).end();
+        } else {
+          res.status(400).end();
+        }
+      });
   } else {
     res.status(403).end();
   }

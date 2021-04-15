@@ -9,10 +9,10 @@ module.exports = (sequelize) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Please provide a value for "firstName"'
+          msg: 'Please enter your First Name'
         },
         notEmpty: {
-          msg: 'Please provide a value for "title"'
+          msg: 'Please enter your First Name'
         }
       },
       set(val) { // set to lowercase after validation to have more consistent data
@@ -27,10 +27,10 @@ module.exports = (sequelize) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Please provide a value for "lastName"'
+          msg: 'Please enter your Last Name'
         },
         notEmpty: {
-          msg: 'Please provide a value for "title"'
+          msg: 'Please enter your Last Name'
         }
       },
       set(val) { // set to lowercase after validation to have more consistent data
@@ -46,7 +46,10 @@ module.exports = (sequelize) => {
       allowNull: false,
       validate: {
         isEmail: {
-          msg: 'Please provide a valid email address for "emailAddress"'
+          msg: 'Please provide a valid E-Mail address'
+        },
+        notNull: {
+          msg: 'Please enter your E-Mail Address'
         }
       },
       set(val) { // set to lowercase after validation to have more consistent data and for easier login, see 'user-auth' middleware
