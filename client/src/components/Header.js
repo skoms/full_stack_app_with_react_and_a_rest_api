@@ -12,13 +12,13 @@ export default function Header(props) {
             {!authUser
             ?
               <ul className="header--signedout">
-                <li><a href="/sign-up">Sign Up</a></li>
-                <li><a href="/sign-in">Sign In</a></li>
+                <li><a href="/signup">Sign Up</a></li>
+                <li><a href="/signin">Sign In</a></li>
               </ul>
             :
               <ul className="header--signedout">
-                <li><p>Hello, {authUser.firstName}</p></li>
-                <li><a href="/sign-out">Sign Out</a></li>
+                <li><p style={{ marginBottom: 0}}>Hello, {authUser.firstName}</p></li>
+                <li><a href="/signout">Sign Out</a></li>
               </ul>
             }
         </nav>

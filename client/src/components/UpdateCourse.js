@@ -9,25 +9,48 @@ export default function UpdateCourse(props) {
   const [ course, setCourse ] = useState({});
   const { id } = useParams();
   const [ didLoad, setDidLoad ] = useState(false);
+  const authUser = context.authenticatedUser;
 
   const [ courseTitle, setCourseTitle ] = useState('');
   const [ courseAuthor, setCourseAuthor ] = useState('');
   const [ courseDescription, setCourseDescription ] = useState('');
   const [ estimatedTime, setEstimatedTime ] = useState('');
   const [ materialsNeeded, setMaterialsNeeded ] = useState('');
+  const [validationErrors, setValidationErrors] = useState(null);
 
   useEffect(() => {
     const getCourse = async () => {
       await context.data.getCourse(id)
-      .then(response => setCourse(response))
-      .catch(err => console.error(err));
+        .then(response => {
+          switch (response.status) {
+            case 200:
+              if (response.course.User.emailAddress !== authUser.emailAddress) {
+                history.push('/forbidden');
+              } else {
+                setCourse(response.course);
+              }
+              break;
+
+            case 404:
+              history.push('/notfound');
+              break;
+
+            case 500:
+              history.push('/error');
+              break;
+                      
+            default:
+              break;
+          }
+        })
+        .catch(err => console.error(err));
     }
 
     if (!didLoad) {
       getCourse();
       setDidLoad(true);
     }
-  }, [context.data, didLoad, id]);
+  }, [authUser.emailAddress, context.data, didLoad, history, id]);
 
   useEffect(() => {
     setCourseTitle(course.title);
@@ -35,7 +58,11 @@ export default function UpdateCourse(props) {
     setCourseDescription(course.description);
     setEstimatedTime(course.estimatedTime);
     setMaterialsNeeded(course.materialsNeeded);
-  }, [course]);
+  }, [didLoad, course]);
+
+  useEffect(() => {
+    document.title = `Update: ${courseTitle}`;
+  })
 
   const change = (e) => {
     const { name, value } = e.target;
@@ -66,65 +93,86 @@ export default function UpdateCourse(props) {
       estimatedTime: estimatedTime,
       materialsNeeded: materialsNeeded
     }
-    console.log(updatedCourse);
-    let user;
-    if (context.authenticatedUser) {
-      const { emailAddress, password } = context.authenticatedUser;
-      user = {
-        username: emailAddress,
-        password: password
-      }
-    } else {
-      user = {
-        username: '',
-        password: ''
-      };
+    const { emailAddress, password } = context.authenticatedUser;
+    const user = {
+      emailAddress: emailAddress,
+      password: password
     }
     
     await context.data.updateCourse(updatedCourse, id, user)
-      .then( status => {
-        if (status === 204) {
-          console.log(`${updatedCourse.courseTitle} was successfully updated!`);
-          history.push(`/api/courses/${id}`);
-        } else {
-          console.log('Update Failed, Makes sure to fill in all the required blanks!');
-          console.dir(status);
+      .then( response => {
+        switch (response.status) {
+          case 204:
+            history.push(`/courses/${id}`);
+            break;
+
+          case 400:
+            setValidationErrors(response.errors);
+            break;
+
+          case 403:
+            history.push('/forbidden');
+            break;
+            
+          case 500:
+            history.push('/error');
+            break;
+                    
+          default:
+            break;
         }
       })
       .catch(err => {
-          console.log(err.message);
+          console.error(err);
           history.push('/error');
       });
   }
 
   const cancel = (e) => {
     e.preventDefault();
-    history.push('/api/courses');
+    history.push('/courses');
   }
 
   return (
     <div className="wrap">
       <h2>Update Course</h2>
+      { validationErrors 
+        ? (
+          <div className="validation--errors">
+            <h3>Validation Errors</h3>
+            <ul>
+                {
+                  validationErrors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                  ))
+                }
+            </ul>
+          </div>
+        ):(
+          <>
+          </>
+        )
+      }
       <form onSubmit={submit}>
         {course.User
         ?
           <div className="main--flex">
             <div>
               <label htmlFor="courseTitle">Course Title</label>
-              <input id="courseTitle" name="courseTitle" type="text" value={courseTitle || course.title} onChange={change} />
+              <input id="courseTitle" name="courseTitle" type="text" value={courseTitle || ''} onChange={change} />
 
               <label htmlFor="courseAuthor">Course Author</label>
-              <input id="courseAuthor" name="courseAuthor" type="text" value={courseAuthor || `${course.User.firstName} ${course.User.lastName}`} onChange={change} />
+              <input id="courseAuthor" name="courseAuthor" type="text" value={courseAuthor || ''} onChange={change} />
 
               <label htmlFor="courseDescription">Course Description</label>
-              <textarea id="courseDescription" name="courseDescription" onChange={change} value={courseDescription || course.description}></textarea>
+              <textarea id="courseDescription" name="courseDescription" onChange={change} value={courseDescription || ''}></textarea>
             </div>
             <div>
               <label htmlFor="estimatedTime">Estimated Time</label>
-              <input id="estimatedTime" name="estimatedTime" type="text" value={estimatedTime || course.estimatedTime} onChange={change} />
+              <input id="estimatedTime" name="estimatedTime" type="text" value={estimatedTime || ''} onChange={change} />
 
               <label htmlFor="materialsNeeded">Materials Needed</label>
-              <textarea id="materialsNeeded" name="materialsNeeded" onChange={change} value={materialsNeeded || course.materialsNeeded}></textarea>
+              <textarea id="materialsNeeded" name="materialsNeeded" onChange={change} value={materialsNeeded || ''}></textarea>
             </div>
         </div>
         :

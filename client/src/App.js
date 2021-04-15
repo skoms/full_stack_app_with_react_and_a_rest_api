@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 
+import { Provider } from './Context';
+import PrivateRoute from './PrivateRoute';
+
 import Header from './components/Header';
 import Courses from './components/Courses';
 import CourseDetail from './components/CourseDetail';
@@ -8,8 +11,10 @@ import UserSignIn from './components/UserSignIn';
 import UserSignUp from './components/UserSignUp';
 import CreateCourse from './components/CreateCourse';
 import UpdateCourse from './components/UpdateCourse';
-import { Provider } from './Context';
 import UserSignOut from './components/UserSignOut';
+import Forbidden from './components/Forbidden';
+import UnhandledError from './components/UnhandledError';
+import NotFound from './components/NotFound';
 
 
 function App() {
@@ -19,15 +24,18 @@ function App() {
         <Header />
         <Router>
           <Switch>
-            <Route exact path="/" render={() => <Redirect to="/api/courses" />} />
-            <Route exact path="/api" render={() => <Redirect to="/api/courses" />} /> 
-            <Route exact path="/api/courses" component={Courses} />
-            <Route path="/api/courses/:id" component={CourseDetail} />
-            <Route path="/create-course" component={CreateCourse} />
-            <Route path="/update-course/:id" component={UpdateCourse} />
-            <Route path="/sign-in" component={UserSignIn} />
-            <Route path="/sign-up" component={UserSignUp} />
-            <Route path="/sign-out" component={UserSignOut} />
+            <Route exact path="/" render={() => <Redirect to="/courses" />} /> 
+            <PrivateRoute exact path="/courses/create" component={CreateCourse} />
+            <PrivateRoute exact path="/courses/:id/update" component={UpdateCourse} />
+            <Route exact path="/courses" component={Courses} />
+            <Route exact path="/courses/:id" component={CourseDetail} />
+            <Route exact path="/signin" component={UserSignIn} />
+            <Route exact path="/signup" component={UserSignUp} />
+            <Route exact path="/signout" component={UserSignOut} />
+            <Route exact path="/forbidden" component={Forbidden} />
+            <Route exact path="/error" component={UnhandledError} />
+            <Route exact path="/notfound" component={NotFound} />
+            <Route component={NotFound} />
           </Switch>
         </Router>
       </div>

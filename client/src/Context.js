@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import Cookies from 'js-cookie';
 import Data from './Data';
 
+
 export const Context = React.createContext(); 
 
 export class Provider extends Component {
-
   constructor() {
     super();
     this.data = new Data();
@@ -35,31 +35,32 @@ export class Provider extends Component {
   }
 
   signUp = async (user) => {
-    const newUser = await this.data.createUser(user);
-    if (newUser.length === 0) {
-      const savedUser = await this.data.getUser(user.emailAddress, user.password);
-      if (savedUser) {
+    const createResponse = await this.data.createUser(user);
+    if (createResponse.status === 201) {
+      const getResponse = await this.data.getUser(user.emailAddress, user.password);
+      if (getResponse.status === 200) {
         this.setState({ authenticatedUser: user });
         Cookies.set('authenticatedUser', JSON.stringify(user));
-        return 201;
+        return createResponse;
       } else {
         throw new Error();
       }
-    } else if (newUser.length > 0) {
-      return newUser;
+    } else if (createResponse.status === 400) {
+      return createResponse;
     } else {
       throw new Error();
     }
   }
   
-  signIn = async (username, password) => {
-    const user = await this.data.getUser(username, password);
-    if (user !== null) {
+  signIn = async (emailAddress, password) => {
+    const response = await this.data.getUser(emailAddress, password);
+    if (response.status === 200) {
+      const { user } = response;
       user.password = password;
       this.setState({ authenticatedUser: user });
       Cookies.set('authenticatedUser', JSON.stringify(user));
-    }
-    return 200;
+    } 
+    return response;
   }
 
   signOut = () => {

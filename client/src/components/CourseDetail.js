@@ -1,40 +1,58 @@
 import { useState, useEffect, useContext } from 'react';
 import { Context } from '../Context';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 export default function CourseDetail(props) {
+  const history = useHistory();
   const context = useContext(Context);
   const [ course, setCourse ] = useState({});
   const { id } = useParams();
   const [ didLoad, setDidLoad ] = useState(false);
 
-  const getMaterials = () => {
-    let materials = course.materialsNeeded.split('*');
-    if (!materials[0]) {
-      materials.shift();
-    }
-    return materials.map( (material, index)=> {
-        return <li key={index}>{material}</li>
-    });
-  }
-
-  const getInstructions = () => {
-    let instructions = course.description.split('\n\n');
-    return instructions.map( (instruction, index)=> {
-      return (<p key={index} className="instruction">{instruction}</p>)
-    });
-  }
-
   const deleteCourse = async () => {
     await context.data.deleteCourse(id)
+              .then(response => {
+                response.status !== 204 && history.push('/error'); 
+              })
               .catch(err => console.error(err));
+  }
+
+  const capitalize = (string, firstOnly = false) => {
+    let strArray = string.split(' ');
+    if (strArray.length <= 1 || firstOnly) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    } else {
+      strArray = strArray.map( str => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      });
+      return strArray.join(' ');
+    }
   }
 
   useEffect(() => {
     const getCourse = async () => {
       await context.data.getCourse(id)
-      .then(response => setCourse(response))
-      .catch(err => console.error(err));
+      .then(response => {
+        
+        switch (response.status) {
+          case 200:
+            setCourse(response.course);
+            break;
+
+          case 404:
+            history.push('/notfound');
+            break;
+
+          case 500:
+            history.push('/error');
+            break;
+                    
+          default:
+            break;
+        }
+      })
+      .catch(err => console.log(err));
     }
 
     if (!didLoad) {
@@ -42,20 +60,31 @@ export default function CourseDetail(props) {
       setDidLoad(true);
     }
 
-  }, [context.data, didLoad, id]);
+  }, [context.data, didLoad, history, id]);
 
   return (
     <>
-          <div className="actions--bar">
-              <div className="wrap">
-                  <a className="button" href={`/update-course/${id}`}>Update Course</a>
-                  <a className="button" href="/api/courses" onClick={deleteCourse}>Delete Course</a>
-                  <a className="button button-secondary" href="/">Return to List</a>
-              </div>
-          </div>
+          
           {course.User 
             ? 
             (
+              <>
+              <div className="actions--bar">
+                  <div className="wrap">
+                    { context.authenticatedUser && 
+                      course.userId === context.authenticatedUser.id 
+                    ? (
+                      <>
+                        <a className="button" href={`/courses/${id}/update`}>Update Course</a>
+                        <a className="button" href="/courses" onClick={deleteCourse}>Delete Course</a>
+                      </>
+                    ):(
+                      <></>
+                    )
+                    }
+                    <a className="button button-secondary" href="/">Return to List</a>
+                  </div>
+              </div>
               <div className="wrap">
                 <h2>Course Detail</h2>
                 <form>
@@ -63,11 +92,11 @@ export default function CourseDetail(props) {
                         <div>
                             <h3 className="course--detail--title">Course</h3>
                             <h4 className="course--name">{course.title}</h4>
-                            <p>By {`${course.User.firstName} ${course.User.lastName}`}</p>
+                            <p>By {capitalize(`${course.User.firstName} ${course.User.lastName}`)}</p>
 
                             {course.description
                             ?
-                              getInstructions()
+                              <ReactMarkdown>{course.description}</ReactMarkdown>
                             :
                               <p>Loading...</p>
                             }
@@ -81,7 +110,7 @@ export default function CourseDetail(props) {
                             <ul className="course--detail--list">
                               {course.materialsNeeded
                               ?
-                                getMaterials()
+                                <ReactMarkdown>{course.materialsNeeded}</ReactMarkdown>
                               :
                                 <li>Loading...</li>
                               }
@@ -90,6 +119,7 @@ export default function CourseDetail(props) {
                     </div>
                 </form>
               </div>
+              </>
             ) 
             : 
               "Loading..."

@@ -10,6 +10,7 @@ export default function UserSignUp(props) {
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [validationErrors, setValidationErrors] = useState(null);
 
   const change = (e) => {
     const { name, value } = e.target;
@@ -35,43 +36,84 @@ export default function UserSignUp(props) {
     }
   }
 
+  const passwordIsConfirmed = () => {
+    if (password !== confirmPassword) {
+      const errorMsg = 'Please make sure that the "Password" and "Confirm Password" matches';
+      if (validationErrors !== null) {
+        const errorNotFound = validationErrors.find(error => error === errorMsg) === undefined;
+        if (errorNotFound) {
+          setValidationErrors(prev => [...prev, errorMsg]);
+        }
+      } else {
+        setValidationErrors([errorMsg]);
+      }
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   const submit = async (e) => {
     e.preventDefault();
-    if (password === confirmPassword) {
-      const user = {
-        firstName: firstName,
-        lastName: lastName,
-        emailAddress: emailAddress,
-        password: password
-      }
+    const user = {
+      firstName: firstName,
+      lastName: lastName,
+      emailAddress: emailAddress,
+      password: password
+    }
+    if (passwordIsConfirmed()) {
       await context.actions.signUp(user)
-        .then( status => {
-          if (status === 201) {
-            console.log('New user created and logged in');
-            history.push('/api/courses');
-          } else {
-            console.log('Login Failed, Makes sure to fill in all the blanks!');
-            console.dir(status);
-            history.push('/sign-up');
+        .then( response => {
+          
+          switch (response.status) {
+            case 200:
+              history.push('/courses');
+              break;
+
+            case 400:
+              setValidationErrors(response.errors);
+              break;
+
+            case 500:
+              history.push('/error');
+              break;
+                      
+            default:
+              break;
           }
         })
         .catch(err => {
             console.log(err);
             history.push('/error');
         });
-    } else {
-      
     }
   }
 
   const cancel = (e) => {
     e.preventDefault();
-    history.push('/api/courses');
+    history.push('/courses');
   }
 
   return (
     <div className="form--centered">
       <h2>Sign Up</h2>
+      { validationErrors 
+        ? (
+          <div className="validation--errors">
+            <h3>Validation Errors</h3>
+            <ul>
+                {
+                  validationErrors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                  ))
+                }
+            </ul>
+          </div>
+        ):(
+          <>
+          </>
+        )
+      }
       
       <form onSubmit={submit}>
         <label htmlFor="firstName">First Name</label>
@@ -86,7 +128,7 @@ export default function UserSignUp(props) {
         <input id="confirmPassword" name="confirmPassword" type="password" onChange={change} value={confirmPassword}/>
         <button className="button" type="submit" onSubmit={submit}>Sign Up</button><button className="button button-secondary" onClick={cancel}>Cancel</button>
       </form>
-      <p>Already have a user account? Click here to <Link to="/sign-in">sign in</Link>!</p>
+      <p>Already have a user account? Click here to <Link to="/signin">sign in</Link>!</p>
     </div>
   );
 }
