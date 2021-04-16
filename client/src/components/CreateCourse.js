@@ -51,9 +51,8 @@ export default function CreateCourse() {
       estimatedTime: estimatedTime,
       materialsNeeded: materialsNeeded
     }
-    console.log(newCourse);
     let user = context.authenticatedUser;
-
+    // Creates a course and sends to api, check '/src/Data.js/' for 'context.data.createCourse(newCourse, user)'
     await context.data.createCourse(newCourse, user)
       .then( response => {
         
@@ -75,7 +74,6 @@ export default function CreateCourse() {
         }
       })
       .catch(err => {
-          console.log(err.message);
           history.push('/error');
       });
   }
@@ -87,46 +85,46 @@ export default function CreateCourse() {
 
   return (
     <div className="wrap">
-              <h2>Create Course</h2>
-              { validationErrors 
-              ? (
-                <div className="validation--errors">
-                  <h3>Validation Errors</h3>
-                  <ul>
-                      {
-                        validationErrors.map((error, index) => (
-                        <li key={index}>{error}</li>
-                        ))
-                      }
-                  </ul>
-                </div>
-              ):(
-                <>
-                </>
-              )
-              }
-              <form onSubmit={submit}>
-                  <div className="main--flex">
-                      <div>
-                          <label htmlFor="courseTitle">Course Title</label>
-                          <input id="courseTitle" name="courseTitle" type="text" value={courseTitle} onChange={change}/>
+      <h2>Create Course</h2>
+      { validationErrors 
+      ? (
+        <div className="validation--errors">
+          <h3>Validation Errors</h3>
+          <ul>
+            {
+              validationErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+              ))
+            }
+          </ul>
+        </div>
+      ):(
+        <>
+        </>
+      )
+      }
+      <form onSubmit={submit}>
+        <div className="main--flex">
+          <div>
+            <label htmlFor="courseTitle">Course Title</label>
+            <input id="courseTitle" name="courseTitle" type="text" value={courseTitle} onChange={change}/>
 
-                          <label htmlFor="courseAuthor">Course Author</label>
-                          <input id="courseAuthor" name="courseAuthor" type="text" disabled={true} defaultValue={courseAuthor} />
+            <label htmlFor="courseAuthor">Course Author</label>
+            <input id="courseAuthor" name="courseAuthor" type="text" disabled={true} defaultValue={courseAuthor} />
 
-                          <label htmlFor="courseDescription">Course Description</label>
-                          <textarea onChange={change} value={courseDescription} id="courseDescription" name="courseDescription"></textarea>
-                      </div>
-                      <div>
-                          <label htmlFor="estimatedTime">Estimated Time</label>
-                          <input id="estimatedTime" name="estimatedTime" type="text" value={estimatedTime} onChange={change}/>
-
-                          <label htmlFor="materialsNeeded">Materials Needed</label>
-                          <textarea onChange={change} value={materialsNeeded} id="materialsNeeded" name="materialsNeeded"></textarea>
-                      </div>
-                  </div>
-                  <button className="button" type="submit" onSubmit={submit}>Create Course</button><button className="button button-secondary" onClick={cancel}>Cancel</button>
-              </form>
+            <label htmlFor="courseDescription">Course Description</label>
+            <textarea onChange={change} value={courseDescription} id="courseDescription" name="courseDescription"></textarea>
           </div>
+          <div>
+            <label htmlFor="estimatedTime">Estimated Time</label>
+            <input id="estimatedTime" name="estimatedTime" type="text" value={estimatedTime} onChange={change}/>
+
+            <label htmlFor="materialsNeeded">Materials Needed</label>
+            <textarea onChange={change} value={materialsNeeded} id="materialsNeeded" name="materialsNeeded"></textarea>
+          </div>
+        </div>
+        <button className="button" type="submit" onSubmit={submit}>Create Course</button><button className="button button-secondary" onClick={cancel}>Cancel</button>
+      </form>
+    </div>
   );
 }

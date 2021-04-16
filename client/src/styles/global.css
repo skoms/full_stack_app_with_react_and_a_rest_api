@@ -1,14 +1,26 @@
 @import url(https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap);
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+/* Using webkit to style the 'autocomplete' styling on hover/focus */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  outline: none;
+  -webkit-text-fill-color: #25bae4;
+  transition: background-color 5000s ease-in-out 0s;
+}
 
 /* global.css */
 * {
     box-sizing: border-box;
 }
 html {
-    font-size: 1.25em;
+    font-size: 1.5em;
 }
 body {
-    font-family: 'Work Sans', sans-serif;
+    background-color: #282C34;
+    color: #61DAFB;
+    font-family: 'VT323', monospace;
 }
 h2 {
     font-size: 1.5rem;
@@ -22,8 +34,18 @@ p {
     hyphens: auto;
 }
 a {
-    color: #939;
+    color: #25bae4;
     text-decoration: none;
+    font-weight: bold;
+    transition: 0s;
+}
+a:hover {
+    color: #b6e3f0;
+}
+input[type=submit] {
+    color: #282C34;
+    background: #61DAFB;
+    font-family: 'VT323', monospace;
 }
 .wrap {
     max-width: 1250px;
@@ -31,8 +53,8 @@ a {
     padding: 0 1rem;
 }
 header {
-    background: #57496e;
-    color: #fff;
+    background: #2672c9;
+    color: #61DAFB;
     padding: 1rem 0;
     margin-bottom: 2rem;
 }
@@ -42,17 +64,17 @@ header {
     align-items: center;
 }
 .header--logo a {
-    font-size: 1.25rem;
-    color: #fff;
+    font-size: 1.5rem;
+    color: #61DAFB;
 }
 header li {
     font-size: .8rem;
 }
-header nav a {
-    color: #dbd;
+a {
+    color: #43e9d3;
 }
-header nav a:hover {
-    color: #fff;
+a:hover {
+    color: #95f7ea;
 }
 
 .header--signedin li {
@@ -64,41 +86,51 @@ header nav a:hover {
     margin-left: .5rem;
 }
 .course--module {
-    background: #7c689b;
+    background: #2672c9;
     border-radius: .5rem;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     display: block;
 }
+.course--module:hover {
+    background: #1b518f;
+    box-shadow: 0 0 0 2px #1b518f inset;
+    cursor: pointer;
+}
 .course--label {
-    color: #fff;
+    color: #61DAFB;
     font-size: .9rem;
     font-weight: 400;
     margin-bottom: .25rem;
 }
 .course--title {
-    color: #fff;
+    color: #61fbf3;
     font-weight: 700;
     font-size: 1.25rem;
 }
 .course--add--module {
-    background: #ddd9e4;
-    color: #57496e;
+    background: #5d7177;
+    color: #6af0e9;
     font-weight: 300;
     font-size: 1.25rem;
+}
+.course--add--module:hover {
+    background: #394549;
+    box-shadow: 0 0 0 2px #394549 inset;
+    cursor: pointer;
 }
 .course--add--title .add {
     width: 20px;
     height: auto;
     margin-right: 5px;
-    fill: #57496e;
+    fill: #6af0e9;
 }
 .course--detail--title {
     padding-bottom: .25rem;
-    border-bottom: 1px solid #888;
+    border-bottom: 1px solid #458f8b;
     margin: 3rem 0 .5rem;
     font-size: .9rem;
-    color: #555;
+    color: #5e8a88;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
@@ -106,7 +138,7 @@ header nav a:hover {
     font-size: 2rem;
     margin-bottom: .5rem;
     font-weight: 700;
-    color: #47395e;
+    color: #61fbf3;
 }
 .course--detail--list {
     font-weight: 300;
@@ -119,18 +151,18 @@ header nav a:hover {
 }
 
 .actions--bar {
-    background: #e9e5f0;
+    background: #303d50;
     padding: 1rem 0;
     margin: -2rem 0 2rem;
 }
 .validation--errors {
-    background: #e9e5f0;
+    background: #303d50;
     padding: 1rem;
     border-radius: .5rem;
     margin-bottom: 2.5rem;
 }
 .validation--errors h3 {
-    color: #800;
+    color: rgb(255, 0, 0);
     font-size: 1.25rem;
     margin-bottom: .5rem;
 }
@@ -162,21 +194,22 @@ label {
 input, textarea {
     display: block;
     width: 100%;
-    color: #332a40;
+    color: #25bae4;
     border-radius: .5rem;
-    border: 1px solid #8c789b;
+    background-color: #303d50;
+    border: 1px solid #616872;
     padding: .5rem;
     margin-bottom: 1rem;
-    font-family: 'Work Sans', sans-serif;
+    font-family: 'VT323', monospace;
     font-size: .8rem;
 }
 textarea {
     min-height: 300px;
 }
 .button {
-    background: #7c689b;
-    color: #fff;
-    font-size: 1rem;
+    background: #25bae4;
+    color: #303d50;
+    font-size: .8rem;
     padding: .75rem 1.5rem;
     border: 0;
     margin: 0 0 .5rem 0;
@@ -191,24 +224,43 @@ textarea {
     margin-bottom: 0;
 }
 .button:not(.button-secondary):hover {
-    background: #63537d;
+    background: #1c92b3;
     cursor: pointer;
 }
 .button-secondary {
-    color: #7c689b;
+    color: #25bae4;
     background: none;
-    box-shadow: 0 0 0 2px #7c689b inset;
+    box-shadow: 0 0 0 2px #25bae4 inset;
     transition: box-shadow 0.2s, color 0.2s;
 }
 .button-secondary:hover {
-    color: #63537d;
-    box-shadow: 0 0 0 2px #63537d inset;
+    color: #1c92b3;
+    box-shadow: 0 0 0 2px #1c92b3 inset;
     cursor: pointer;
 }
 input:focus, button:focus, .button:focus, textarea:focus {
+    outline: none;
     border: none;
-    border-radius: 0;
-    outline: 2px solid #332a40;
+    border: 1px solid #25bae4;
+    border-radius: .5rem;
+}
+.error-container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+}
+.error-container img {
+    height: 12rem;
+    width: 6rem;
+}
+.error-container h1 {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+.error-container p {
+    max-width: 23rem;
+    margin: .5rem 0;
 }
 
 @media screen and (min-width: 600px) {

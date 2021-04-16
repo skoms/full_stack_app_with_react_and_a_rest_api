@@ -11,11 +11,11 @@ export default function Header(props) {
       <div className="wrap header--flex">
         <h1 className="header--logo"><a href="/">Courses</a></h1>
         <nav>
-            {!authUser
+            {!authUser // Checks if logged in and loads accordingly
             ?
               <ul className="header--signedout">
-                <li><Link to={{ pathname: "/signup", state: { from: location }}}>Sign Up</Link></li>
-                <li><Link to={{ pathname: "/signin", state: { from: location }}}>Sign In</Link></li>
+                <li><Link to={{ pathname: "/signup", state: { from: location }}}>Sign Up</Link></li> {/* Saves the current location when clicking the signin/signup button */}
+                <li><Link to={{ pathname: "/signin", state: { from: location }}}>Sign In</Link></li> 
               </ul>
             :
               <ul className="header--signedout">

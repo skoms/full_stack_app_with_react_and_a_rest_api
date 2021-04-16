@@ -2,21 +2,23 @@ import React, { Component } from 'react';
 import Cookies from 'js-cookie';
 import Data from './Data';
 
-
+// Creates Context
 export const Context = React.createContext(); 
 
+// Declare provider
 export class Provider extends Component {
   constructor() {
     super();
-    this.data = new Data();
+    this.data = new Data(); // Imports functions made for managing api calls, check '/src/Data.js'
     this.state = {
-      authenticatedUser: Cookies.getJSON('authenticatedUser') || null,
+      authenticatedUser: Cookies.getJSON('authenticatedUser') || null, // Sets the 'authenticatedUser' if theres a cookie, or 'null' if not
     };
   }
 
   render() {
     const { authenticatedUser } = this.state;
 
+    // Set value to be provided down to consumers
     const value = {
       authenticatedUser,
       data: this.data,
@@ -35,6 +37,7 @@ export class Provider extends Component {
     );
   }
 
+  // Capitalizes either first word or all words (Used as 'user' info is stored in lowercase for consistency)
   capitalize = (string, firstOnly = false) => {
     let strArray = string.split(' ');
     if (strArray.length <= 1 || firstOnly) {
@@ -47,6 +50,7 @@ export class Provider extends Component {
     }
   }
 
+  // Signs up (and if successful, signs in) the user, and sets cookie and global variable for authenticated user
   signUp = async (user) => {
     const createResponse = await this.data.createUser(user);
     if (createResponse.status === 201) {
@@ -65,6 +69,7 @@ export class Provider extends Component {
     }
   }
   
+  // Signs in the user, and sets cookie and global variable for authenticated user
   signIn = async (emailAddress, password) => {
     const response = await this.data.getUser(emailAddress, password);
     if (response.status === 200) {
@@ -76,6 +81,7 @@ export class Provider extends Component {
     return response;
   }
 
+  // Signs out the user, and removes cookie and set global variable to 'null' for authenticated user
   signOut = () => {
     this.setState({ authenticatedUser: null });
     Cookies.remove('authenticatedUser');

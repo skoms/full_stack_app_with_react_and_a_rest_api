@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Context } from '../Context';
 
 export default function UserSignUp(props) {
@@ -12,6 +13,14 @@ export default function UserSignUp(props) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [validationErrors, setValidationErrors] = useState(null);
+
+  const [didLoad, setDidLoad] = useState(false);
+  useEffect(() => {
+    if (!didLoad) {
+      document.title = "Sign Up";
+      setDidLoad(true);
+    }
+  }, [didLoad]);
 
   const change = (e) => {
     const { name, value } = e.target;
@@ -37,7 +46,7 @@ export default function UserSignUp(props) {
     }
   }
 
-  const passwordIsConfirmed = () => {
+  const passwordIsConfirmed = () => { // Confirms that the password and confirmation matches, and sets errors accordingly
     if (password !== confirmPassword) {
       const errorMsg = 'Please make sure that the "Password" and "Confirm Password" matches';
       if (validationErrors !== null) {
@@ -64,6 +73,7 @@ export default function UserSignUp(props) {
     }
     if (passwordIsConfirmed()) {
       const { from } = location.state || { from: { pathname: '/courses' } };
+      // Signs Up the user with info given if valid, check '/src/Context.js/' for 'context.actions.signUp(user)'
       await context.actions.signUp(user)
         .then( response => {
           
@@ -85,7 +95,6 @@ export default function UserSignUp(props) {
           }
         })
         .catch(err => {
-            console.log(err);
             history.push('/error');
         });
     }
@@ -130,7 +139,7 @@ export default function UserSignUp(props) {
         <input id="confirmPassword" name="confirmPassword" type="password" onChange={change} value={confirmPassword}/>
         <button className="button" type="submit" onSubmit={submit}>Sign Up</button><button className="button button-secondary" onClick={cancel}>Cancel</button>
       </form>
-      <p>Already have a user account? Click here to <Link to="/signin">sign in</Link>!</p>
+      <p>Already have a user account? Click here to <Link to={{ pathname: "/signin", state: { from: location }}}>sign in</Link>!</p>
     </div>
   );
 }

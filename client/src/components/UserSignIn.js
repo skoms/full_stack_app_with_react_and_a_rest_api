@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Context } from '../Context';
 
@@ -9,6 +9,14 @@ export default function UserSignIn(props) {
   const [ password, setPassword ] = useState('');
   const [ loginFailed, setLoginFailed ] = useState(false);
   const history = useHistory();
+
+  const [didLoad, setDidLoad] = useState(false);
+  useEffect(() => {
+    if (!didLoad) {
+      document.title = "Sign In";
+      setDidLoad(true);
+    }
+  }, [didLoad]);
 
   const change = (e) => {
     const { name, value } = e.target;
@@ -28,7 +36,8 @@ export default function UserSignIn(props) {
 
   const submit = async (e) => {
     e.preventDefault();
-    const { from } = location.state || { from: { pathname: '/courses' } };
+    const { from } = location.state || { from: { pathname: '/courses' } }; // gets the saved location before signin
+    // Signs in the user if credentials match, check '/src/Context.js/' for 'context.actions.signIn(emailAddress, password)'
     await context.actions.signIn(emailAddress, password)
       .then( response => {
         
@@ -50,7 +59,6 @@ export default function UserSignIn(props) {
         }
       })
       .catch(err => {
-          console.log(err);
           history.push('/error');
       });
   }
@@ -81,7 +89,7 @@ export default function UserSignIn(props) {
             <input id="password" name="password" onChange={change} type="password" value={password} />
             <button className="button" type="submit" onSubmit={submit}>Sign In</button><button className="button button-secondary" onClick={cancel}>Cancel</button>
         </form>
-        <p>Don't have a user account? Click here to <Link to="/signup">sign up</Link>!</p>
+        <p>Don't have a user account? Click here to <Link to={{ pathname: "/signup", state: { from: location }}}>sign up</Link>!</p>
     </div>
   );
 }

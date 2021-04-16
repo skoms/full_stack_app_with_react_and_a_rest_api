@@ -19,12 +19,13 @@ export default function UpdateCourse(props) {
   const [validationErrors, setValidationErrors] = useState(null);
 
   useEffect(() => {
+    // Gets the course matching the '/:id/', check '/src/Data.js/' for 'context.data.getCourse(id)'
     const getCourse = async () => {
       await context.data.getCourse(id)
         .then(response => {
           switch (response.status) {
             case 200:
-              if (response.course.User.emailAddress !== authUser.emailAddress) {
+              if (response.course.User.emailAddress !== authUser.emailAddress) { // Makes sure user is authorized before loading page
                 history.push('/forbidden');
               } else {
                 setCourse(response.course);
@@ -43,7 +44,9 @@ export default function UpdateCourse(props) {
               break;
           }
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          history.push('/error');
+        });
     }
 
     if (!didLoad) {
@@ -98,7 +101,7 @@ export default function UpdateCourse(props) {
       emailAddress: emailAddress,
       password: password
     }
-    
+    // updates the course matching the '/:id/', check '/src/Data.js/' for 'context.data.updateCourse(updatedCourse, id, user)'
     await context.data.updateCourse(updatedCourse, id, user)
       .then( response => {
         switch (response.status) {
@@ -123,7 +126,6 @@ export default function UpdateCourse(props) {
         }
       })
       .catch(err => {
-          console.error(err);
           history.push('/error');
       });
   }

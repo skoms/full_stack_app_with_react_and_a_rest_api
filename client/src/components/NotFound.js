@@ -1,11 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import NotFoundPic from '../images/NotFoundPants.png';
 
 const NotFound = () => {
+  const [didLoad, setDidLoad] = useState(false);
+  useEffect(() => {
+    if (!didLoad) {
+      document.title = "404: Not Found";
+      setDidLoad(true);
+    }
+  }, [didLoad]);
   return (
     <div className="error-container">
       <img src={NotFoundPic} alt="404 figure"/>
-      <h1>Not Found - You've caught us with our pants down!</h1>
+      <h1>Not Found</h1>
+      <h1>You've caught us with our pants down!</h1>
 
       <p>Well, this is embarrassing. We can't find the page you are looking for. <strong>Bad link? Mistyped address?</strong> We're not sure.</p>
 
