@@ -18,18 +18,6 @@ export default function CourseDetail(props) {
               .catch(err => console.error(err));
   }
 
-  const capitalize = (string, firstOnly = false) => {
-    let strArray = string.split(' ');
-    if (strArray.length <= 1 || firstOnly) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    } else {
-      strArray = strArray.map( str => {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-      });
-      return strArray.join(' ');
-    }
-  }
-
   useEffect(() => {
     const getCourse = async () => {
       await context.data.getCourse(id)
@@ -92,7 +80,7 @@ export default function CourseDetail(props) {
                         <div>
                             <h3 className="course--detail--title">Course</h3>
                             <h4 className="course--name">{course.title}</h4>
-                            <p>By {capitalize(`${course.User.firstName} ${course.User.lastName}`)}</p>
+                            <p>By {context.actions.capitalize(`${course.User.firstName} ${course.User.lastName}`)}</p>
 
                             {course.description
                             ?

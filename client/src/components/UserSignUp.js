@@ -1,8 +1,9 @@
 import { useContext, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Context } from '../Context';
 
 export default function UserSignUp(props) {
+  const location = useLocation();
   const context = useContext(Context);
   const history = useHistory();
   const [ firstName, setFirstName ] = useState('');
@@ -62,12 +63,13 @@ export default function UserSignUp(props) {
       password: password
     }
     if (passwordIsConfirmed()) {
+      const { from } = location.state || { from: { pathname: '/courses' } };
       await context.actions.signUp(user)
         .then( response => {
           
           switch (response.status) {
-            case 200:
-              history.push('/courses');
+            case 201:
+              history.push(from);
               break;
 
             case 400:

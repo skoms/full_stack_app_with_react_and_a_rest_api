@@ -112,7 +112,7 @@ export default function CreateCourse() {
                           <input id="courseTitle" name="courseTitle" type="text" value={courseTitle} onChange={change}/>
 
                           <label htmlFor="courseAuthor">Course Author</label>
-                          <input id="courseAuthor" name="courseAuthor" type="text" value={courseAuthor}  onChange={change}/>
+                          <input id="courseAuthor" name="courseAuthor" type="text" disabled={true} defaultValue={courseAuthor} />
 
                           <label htmlFor="courseDescription">Course Description</label>
                           <textarea onChange={change} value={courseDescription} id="courseDescription" name="courseDescription"></textarea>

@@ -21,8 +21,8 @@ function App() {
   return (
     <Provider>
       <div className="App">
-        <Header />
         <Router>
+          <Header />
           <Switch>
             <Route exact path="/" render={() => <Redirect to="/courses" />} /> 
             <PrivateRoute exact path="/courses/create" component={CreateCourse} />

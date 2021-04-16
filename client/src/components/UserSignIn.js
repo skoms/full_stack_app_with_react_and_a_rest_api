@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Context } from '../Context';
 
 export default function UserSignIn(props) {
+  const location = useLocation();
   const context = useContext(Context);
   const [ emailAddress, setEmailAddress ] = useState('');
   const [ password, setPassword ] = useState('');
@@ -27,7 +28,7 @@ export default function UserSignIn(props) {
 
   const submit = async (e) => {
     e.preventDefault();
-    const { from } = props.location.state || { from: { pathname: '/courses' } };
+    const { from } = location.state || { from: { pathname: '/courses' } };
     await context.actions.signIn(emailAddress, password)
       .then( response => {
         

@@ -1,8 +1,10 @@
 import { useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Context } from '../Context';
 
 export default function Header(props) {
   const context = useContext(Context);
+  const location = useLocation();
   const authUser = context.authenticatedUser || null;
   return (
     <header>
@@ -12,12 +14,12 @@ export default function Header(props) {
             {!authUser
             ?
               <ul className="header--signedout">
-                <li><a href="/signup">Sign Up</a></li>
-                <li><a href="/signin">Sign In</a></li>
+                <li><Link to={{ pathname: "/signup", state: { from: location }}}>Sign Up</Link></li>
+                <li><Link to={{ pathname: "/signin", state: { from: location }}}>Sign In</Link></li>
               </ul>
             :
               <ul className="header--signedout">
-                <li><p style={{ marginBottom: 0}}>Hello, {authUser.firstName}</p></li>
+                <li><p style={{ marginBottom: 0}}>Hello, {context.actions.capitalize(`${authUser.firstName} ${authUser.lastName}`)}</p></li>
                 <li><a href="/signout">Sign Out</a></li>
               </ul>
             }

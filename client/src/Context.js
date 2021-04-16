@@ -24,6 +24,7 @@ export class Provider extends Component {
         signIn: this.signIn,
         signOut: this.signOut,
         signUp: this.signUp,
+        capitalize: this.capitalize,
       },
     };
 
@@ -32,6 +33,18 @@ export class Provider extends Component {
         {this.props.children}
       </Context.Provider>  
     );
+  }
+
+  capitalize = (string, firstOnly = false) => {
+    let strArray = string.split(' ');
+    if (strArray.length <= 1 || firstOnly) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    } else {
+      strArray = strArray.map( str => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      });
+      return strArray.join(' ');
+    }
   }
 
   signUp = async (user) => {

@@ -94,10 +94,18 @@ export default class Data {
     } else if (response.status > 299) {
       return response.json()
         .then(data => {
-          return { 
-            status: response.status,
-            errors: data.message
-          };
+          if (typeof data.message === 'string') {
+            return { 
+              status: response.status,
+              errors: [data.message]
+            };
+          } else {
+            return { 
+              status: response.status,
+              errors: data.message
+            };
+          }
+          
         });
     }
   }
