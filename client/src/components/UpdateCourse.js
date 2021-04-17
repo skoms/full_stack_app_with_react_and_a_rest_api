@@ -132,7 +132,7 @@ export default function UpdateCourse(props) {
 
   const cancel = (e) => {
     e.preventDefault();
-    history.push('/courses');
+    history.push(`/courses/${id}`);
   }
 
   return (
@@ -164,7 +164,7 @@ export default function UpdateCourse(props) {
               <input id="courseTitle" name="courseTitle" type="text" value={courseTitle || ''} onChange={change} />
 
               <label htmlFor="courseAuthor">Course Author</label>
-              <input id="courseAuthor" name="courseAuthor" type="text" value={courseAuthor || ''} onChange={change} />
+              <input id="courseAuthor" name="courseAuthor" type="text" className="disabled"  disabled={true} defaultValue={courseAuthor} />
 
               <label htmlFor="courseDescription">Course Description</label>
               <textarea id="courseDescription" name="courseDescription" onChange={change} value={courseDescription || ''}></textarea>

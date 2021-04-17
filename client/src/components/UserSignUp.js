@@ -79,6 +79,7 @@ export default function UserSignUp(props) {
           
           switch (response.status) {
             case 201:
+              console.log(response.user.id);
               history.push(from);
               break;
 

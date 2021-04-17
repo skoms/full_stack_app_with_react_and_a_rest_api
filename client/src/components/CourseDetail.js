@@ -54,7 +54,6 @@ export default function CourseDetail(props) {
       document.title = "Course Detail";
       setDidLoad(true);
     }
-
   }, [context.data, didLoad, history, id]);
 
   return (

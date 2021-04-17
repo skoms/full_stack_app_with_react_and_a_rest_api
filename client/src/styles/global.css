@@ -262,6 +262,16 @@ input:focus, button:focus, .button:focus, textarea:focus {
     max-width: 23rem;
     margin: .5rem 0;
 }
+.disabled {
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    margin-bottom: .2rem;
+}
+.giphy-embed {
+    border-radius: .5rem;
+}
 
 @media screen and (min-width: 600px) {
     .header--signedin li {

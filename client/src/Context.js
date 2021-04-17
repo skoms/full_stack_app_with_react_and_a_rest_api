@@ -56,9 +56,18 @@ export class Provider extends Component {
     if (createResponse.status === 201) {
       const getResponse = await this.data.getUser(user.emailAddress, user.password);
       if (getResponse.status === 200) {
-        this.setState({ authenticatedUser: user });
-        Cookies.set('authenticatedUser', JSON.stringify(user));
-        return createResponse;
+        this.setState({ authenticatedUser: {
+          id: getResponse.user.id,
+          ...user
+        }});
+        Cookies.set('authenticatedUser', JSON.stringify({
+          id: getResponse.user.id,
+          ...user
+        }));
+        return {
+          status: createResponse.status,
+          user: getResponse.user
+        };
       } else {
         throw new Error();
       }
