@@ -12,9 +12,13 @@ export default function CourseDetail(props) {
 
   // Deletes the course matching the '/:id/', check '/src/Data.js/' for 'context.data.deleteCourse(id)'
   const deleteCourse = async () => {
-    await context.data.deleteCourse(id)
+    await context.data.deleteCourse(id, context.authenticatedUser)
               .then(response => {
-                response.status !== 204 && history.push('/error'); 
+                if (response.status !== 204) {
+                  history.push('/error'); 
+                } else {
+                  history.push('/courses'); 
+                }
               })
               .catch(err => {
                 history.push('/error');
@@ -69,7 +73,7 @@ export default function CourseDetail(props) {
                 ? (
                   <>
                     <a className="button" href={`/courses/${id}/update`}>Update Course</a>
-                    <a className="button" href="/courses" onClick={deleteCourse}>Delete Course</a>
+                    <button className="button" onClick={deleteCourse}>Delete Course</button>
                   </>
                 ):(
                   <></>
@@ -105,7 +109,7 @@ export default function CourseDetail(props) {
                     ?
                       <ReactMarkdown>{course.materialsNeeded}</ReactMarkdown>
                     :
-                      <li>Loading...</li>
+                      <></>
                     }
                   </ul>
                 </div>

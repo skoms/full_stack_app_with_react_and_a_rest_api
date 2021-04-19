@@ -44,13 +44,7 @@ router.put('/:id', authenticateLogin, asyncHandler(async (req, res) => {
 
   if (owner.emailAddress === req.currentUser.emailAddress) {
     await Course.update(req.body, { where: { id: req.params.id } })
-      .then(response => {
-        if (response.statusCode === 204) {
-          res.status(204).end();
-        } else {
-          res.status(400).end();
-        }
-      });
+      .then(res.status(204).end());
   } else {
     res.status(403).end();
   }
@@ -62,8 +56,8 @@ router.delete('/:id', authenticateLogin, asyncHandler(async (req, res) => {
   const owner = await User.findOne({ where: { id: course.userId }});
   
   if (owner.emailAddress === req.currentUser.emailAddress) {
-    await Course.destroy({ where: { id: req.params.id } });
-    res.status(204).end();
+    await Course.destroy({ where: { id: req.params.id } })
+      .then(res.status(204).end());
   } else {
     res.status(403).end();
   }

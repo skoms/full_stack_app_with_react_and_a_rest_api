@@ -56,12 +56,13 @@ export default function UpdateCourse(props) {
   }, [authUser.emailAddress, context.data, didLoad, history, id]);
 
   useEffect(() => {
+    const { firstName, lastName } = context.authenticatedUser;
     setCourseTitle(course.title);
-    setCourseAuthor(course.User ? `${course.User.firstName} ${course.User.lastName}` : 'Loading...');
+    setCourseAuthor(context.authenticatedUser ? `${firstName} ${lastName}` : 'Loading...');
     setCourseDescription(course.description);
     setEstimatedTime(course.estimatedTime);
     setMaterialsNeeded(course.materialsNeeded);
-  }, [didLoad, course]);
+  }, [didLoad, course, context.authenticatedUser]);
 
   useEffect(() => {
     document.title = `Update: ${courseTitle}`;
