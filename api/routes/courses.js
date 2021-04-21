@@ -44,7 +44,11 @@ router.put('/:id', authenticateLogin, asyncHandler(async (req, res) => {
 
   if (owner.emailAddress === req.currentUser.emailAddress) {
     await Course.update(req.body, { where: { id: req.params.id } })
-      .then(res.status(204).end());
+      .then(response => {
+        if (!response.name) {
+          res.status(204).end()
+        }
+      });
   } else {
     res.status(403).end();
   }
